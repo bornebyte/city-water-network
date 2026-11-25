@@ -56,9 +56,11 @@
 
   function colour(adj, k) {         // backtracking proper k-colouring (the report's colorGraph, one witness)
     const c = Array(6).fill(-1);
-    const go = i => { if (i === 6) return true;
+    const go = i => {
+      if (i === 6) return true;
       for (let x = 0; x < k; x++) if (adj[i].every(n => c[n] !== x)) { c[i] = x; if (go(i + 1)) return true; c[i] = -1; }
-      return false; };
+      return false;
+    };
     return go(0) ? c : null;
   }
 
@@ -66,19 +68,25 @@
     const es = edges.map(e => [V.indexOf(e[0]), V.indexOf(e[1])]);
     const adj = V.map(() => []); es.forEach(([a, b]) => { adj[a].push(b); adj[b].push(a); });
     const deg = adj.map(a => a.length), seen = new Set(); let comps = 0;
-    for (let s = 0; s < 6; s++) if (!seen.has(s)) { comps++; const q = [s]; seen.add(s);
-      while (q.length) for (const n of adj[q.pop()]) if (!seen.has(n)) { seen.add(n); q.push(n); } }
+    for (let s = 0; s < 6; s++) if (!seen.has(s)) {
+      comps++; const q = [s]; seen.add(s);
+      while (q.length) for (const n of adj[q.pop()]) if (!seen.has(n)) { seen.add(n); q.push(n); }
+    }
     const p = poly(6, es), pv = [0, 1, 2, 3, 4, 5, 6, 7].map(k => evalP(p, k));
     let chi = 1; while (pv[chi] <= 0) chi++;
     const isPlanar = planar(es);
-    return { E: es.length, deg, sumDeg: deg.reduce((a, b) => a + b, 0), comps, connected: comps === 1,
+    return {
+      E: es.length, deg, sumDeg: deg.reduce((a, b) => a + b, 0), comps, connected: comps === 1,
       planar: isPlanar, faces: isPlanar ? 1 + comps - 6 + es.length : null, poly: p, polyStr: fmt(p), pv, chi,
-      coloring: colour(adj, chi) };
+      coloring: colour(adj, chi)
+    };
   }
 
   function impact(edges) {          // effect of deleting each single pipeline
-    return edges.map(e => { const r = analyze(edges.filter(x => x !== e));
-      return { edge: e, connected: r.connected, planar: r.planar, chi: r.chi, p3: r.pv[3] }; });
+    return edges.map(e => {
+      const r = analyze(edges.filter(x => x !== e));
+      return { edge: e, connected: r.connected, planar: r.planar, chi: r.chi, p3: r.pv[3] };
+    });
   }
 
   const api = { V, ALL, ORIGINAL, norm, clean, analyze, impact };

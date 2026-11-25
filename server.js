@@ -26,8 +26,10 @@ const QUIZ = [
 
 const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.json': 'application/json' };
 const send = (res, code, data) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(data)); };
-const body = req => new Promise((ok, no) => { let b = ''; req.on('data', c => { b += c; if (b.length > 1e5) req.destroy(); });
-  req.on('end', () => { try { ok(b ? JSON.parse(b) : {}); } catch (e) { no(e); } }); });
+const body = req => new Promise((ok, no) => {
+  let b = ''; req.on('data', c => { b += c; if (b.length > 1e5) req.destroy(); });
+  req.on('end', () => { try { ok(b ? JSON.parse(b) : {}); } catch (e) { no(e); } });
+});
 
 async function api(req, res, url) {
   const m = req.method, id = url.split('/')[3];
@@ -38,10 +40,12 @@ async function api(req, res, url) {
   }
   if (url.startsWith('/api/scenarios')) {
     if (m === 'GET') return send(res, 200, (await all('SELECT * FROM scenarios ORDER BY id DESC')).map(r => ({ ...r, edges: JSON.parse(r.edges) })));
-    if (m === 'POST') { const b = await body(req), edges = G.clean(b.edges), name = String(b.name || '').trim().slice(0, 60);
+    if (m === 'POST') {
+      const b = await body(req), edges = G.clean(b.edges), name = String(b.name || '').trim().slice(0, 60);
       if (!edges || !name) return send(res, 400, { error: 'Name and a valid edge list are required' });
       const r = await run('INSERT INTO scenarios(name,edges,chi) VALUES(?,?,?)', [name, JSON.stringify(edges), G.analyze(edges).chi]);
-      return send(res, 201, { id: r.lastID }); }
+      return send(res, 201, { id: r.lastID });
+    }
     if (m === 'DELETE' && id) { await run('DELETE FROM scenarios WHERE id=?', [+id]); return send(res, 200, { ok: true }); }
   }
   if (url === '/api/quiz' && m === 'GET') return send(res, 200, QUIZ.map(({ q, o }) => ({ q, o })));
@@ -61,7 +65,9 @@ http.createServer(async (req, res) => {
     if (url.startsWith('/api/')) return await api(req, res, url);
     const file = path.normalize(path.join(PUB, url === '/' ? 'index.html' : url));
     if (!file.startsWith(PUB)) return send(res, 403, { error: 'Forbidden' });
-    fs.readFile(file, (e, d) => { if (e) return send(res, 404, { error: 'Not found' });
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' }); res.end(d); });
+    fs.readFile(file, (e, d) => {
+      if (e) return send(res, 404, { error: 'Not found' });
+      res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' }); res.end(d);
+    });
   } catch (e) { send(res, 400, { error: e.message }); }
 }).listen(PORT, () => console.log('City Water Network running at http://localhost:' + PORT));

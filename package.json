@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "description": "Graph theory lab for the City Water Network project (Group 7, 25BSMA10)",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
-  "dependencies": { "sqlite3": "^5.1.7" },
-  "pnpm": { "onlyBuiltDependencies": ["sqlite3"] }
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sqlite3"
+    ]
+  }
 }

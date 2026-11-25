@@ -16,8 +16,10 @@ const offline = () => toast('Server not reachable. Run npm start to use the data
 
 function render() {
   R = G.analyze(edges);
-  const lines = edges.map(e => { const [a, b] = [POS[e[0]], POS[e[1]]];
-    return `<line class="edge" data-e="${e}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"><title>Pipeline ${lab(e)}: tap to remove</title></line>`; }).join('');
+  const lines = edges.map(e => {
+    const [a, b] = [POS[e[0]], POS[e[1]]];
+    return `<line class="edge" data-e="${e}" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"><title>Pipeline ${lab(e)}: tap to remove</title></line>`;
+  }).join('');
   const nodes = G.V.map((v, i) => `<g class="node${sel === v ? ' sel' : ''}" data-v="${v}" tabindex="0" role="button" aria-label="${NAME[v]}">
     <circle cx="${POS[v][0]}" cy="${POS[v][1]}" r="27" fill="${R.coloring ? TEAM[R.coloring[i]] : '#888'}"/>
     <text class="v" x="${POS[v][0]}" y="${POS[v][1] + 7}">${v}</text><text class="s" x="${POS[v][0]}" y="${POS[v][1] + 46}">${NAME[v]}</text></g>`).join('');
@@ -44,8 +46,10 @@ function drawK() {
 function drawImpact() {
   const rows = G.impact(edges);
   $('#itab').innerHTML = rows.length ? '<tr><th>Cut pipeline</th><th>Connected</th><th>Planar</th><th>χ</th><th>P(G,3)</th><th>Effect</th></tr>' +
-    rows.map(r => { const d = r.chi - R.chi, t = !r.connected ? '<span class="tag r">Disconnects network</span>' : d < 0 ? '<span class="tag g">Saves a team</span>' : '<span class="tag">No change</span>';
-      return `<tr class="click" data-e="${r.edge}"><td><b>${lab(r.edge)}</b></td><td>${r.connected ? 'Yes' : 'No'}</td><td>${r.planar ? 'Yes' : 'No'}</td><td>${r.chi}</td><td>${r.p3}</td><td>${t}</td></tr>`; }).join('')
+    rows.map(r => {
+      const d = r.chi - R.chi, t = !r.connected ? '<span class="tag r">Disconnects network</span>' : d < 0 ? '<span class="tag g">Saves a team</span>' : '<span class="tag">No change</span>';
+      return `<tr class="click" data-e="${r.edge}"><td><b>${lab(r.edge)}</b></td><td>${r.connected ? 'Yes' : 'No'}</td><td>${r.planar ? 'Yes' : 'No'}</td><td>${r.chi}</td><td>${r.p3}</td><td>${t}</td></tr>`;
+    }).join('')
     : '<tr><td>No pipelines in the current network. Add some in the lab.</td></tr>';
 }
 function setEdges(e) { edges = G.clean(e); sel = null; render(); }
@@ -68,28 +72,34 @@ function loadScen() {
   api('/api/scenarios').then(list => {
     $('#slist').innerHTML = list.length ? list.map(s => `<div class="card"><span>${s.created}</span><b>${s.name.replace(/</g, '&lt;')}</b><span>${s.edges.length} pipelines · χ = ${s.chi}</span>
       <div class="row"><button data-load="${s.id}">Open in lab</button><button class="ghost" data-del="${s.id}">Delete</button></div></div>`).join('') : '<p class="hint">Nothing saved yet. Build a layout in the lab and save it.</p>';
-    $('#slist').onclick = ev => { const l = ev.target.dataset.load, d = ev.target.dataset.del;
+    $('#slist').onclick = ev => {
+      const l = ev.target.dataset.load, d = ev.target.dataset.del;
       if (l) { setEdges(list.find(s => s.id == l).edges); show('lab'); toast('Scenario loaded'); }
-      if (d) api('/api/scenarios/' + d, 'DELETE').then(() => { toast('Scenario deleted'); loadScen(); }); };
+      if (d) api('/api/scenarios/' + d, 'DELETE').then(() => { toast('Scenario deleted'); loadScen(); });
+    };
   }).catch(() => { $('#slist').innerHTML = '<p class="hint">Start the Node server to see saved scenarios.</p>'; });
 }
 let quiz = [];
 function loadQuiz() {
-  api('/api/quiz').then(q => { quiz = q;
+  api('/api/quiz').then(q => {
+    quiz = q;
     $('#qs').innerHTML = q.map((x, i) => `<div class="q" id="q${i}"><p>${i + 1}. ${x.q}</p>${x.o.map((o, j) => `<label><input type="radio" name="q${i}" value="${j}"> ${o}</label>`).join('')}</div>`).join('');
   }).catch(() => { $('#qs').innerHTML = '<p class="hint">Start the Node server to take the quiz.</p>'; });
   loadBoard();
 }
-function loadBoard() { api('/api/scores').then(s => { $('#board').innerHTML = s.length ? s.map(x => `<li>${x.name.replace(/</g, '&lt;')}: ${x.score}/${x.total}</li>`).join('') : '<li>No scores yet. Be the first.</li>'; }).catch(() => {}); }
+function loadBoard() { api('/api/scores').then(s => { $('#board').innerHTML = s.length ? s.map(x => `<li>${x.name.replace(/</g, '&lt;')}: ${x.score}/${x.total}</li>`).join('') : '<li>No scores yet. Be the first.</li>'; }).catch(() => { }); }
 $('#qsub').onclick = () => {
   const answers = quiz.map((_, i) => { const c = document.querySelector(`input[name=q${i}]:checked`); return c ? +c.value : -1; });
   if (answers.includes(-1)) return toast('Answer every question first');
   api('/api/quiz', 'POST', { name: $('#qname').value, answers }).then(r => {
     r.correct.forEach((a, i) => $('#q' + i).className = 'q ' + (answers[i] === a ? 'right' : 'wrong'));
-    $('#qres').textContent = `You scored ${r.score} of ${r.total}.`; loadBoard(); }).catch(offline);
+    $('#qres').textContent = `You scored ${r.score} of ${r.total}.`; loadBoard();
+  }).catch(offline);
 };
-function show(t) { document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id === t)); document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
-  if (t === 'scen') loadScen(); if (t === 'quiz') loadQuiz(); scrollTo(0, 0); }
+function show(t) {
+  document.querySelectorAll('.tab').forEach(s => s.classList.toggle('on', s.id === t)); document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  if (t === 'scen') loadScen(); if (t === 'quiz') loadQuiz(); scrollTo(0, 0);
+}
 $('#tabs').onclick = ev => { if (ev.target.dataset.tab) show(ev.target.dataset.tab); };
 $('#theme').onclick = () => { const d = document.documentElement, dark = getComputedStyle(d).getPropertyValue('--bg').trim() === '#0b1e29'; d.dataset.theme = dark ? 'light' : 'dark'; };
 render();

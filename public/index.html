@@ -1,78 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>City Water Network · Graph Theory Lab</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>City Water Network · Graph Theory Lab</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<header class="top">
-  <div class="brand"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="3" fill="currentColor"/><g stroke="currentColor" stroke-width="2" fill="none"><path d="M15 15L15 3M15 15L26 11M15 15L22 26M15 15L8 26M15 15L4 11"/><path d="M15 3L26 11L22 26L8 26L4 11Z" opacity=".45"/></g></svg>
-    <div><strong>City Water Network</strong><small>Graph theory lab · Group 7 · 25BSMA10</small></div></div>
-  <nav id="tabs" aria-label="Sections">
-    <button data-tab="lab" class="on">Network lab</button><button data-tab="impact">Pipeline impact</button>
-    <button data-tab="scen">Saved scenarios</button><button data-tab="quiz">Quiz</button><button data-tab="report">Project</button>
-  </nav>
-  <button id="theme" class="ghost" aria-label="Toggle dark mode">Theme</button>
-</header>
+  <header class="top">
+    <div class="brand"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+        <circle cx="15" cy="15" r="3" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="2" fill="none">
+          <path d="M15 15L15 3M15 15L26 11M15 15L22 26M15 15L8 26M15 15L4 11" />
+          <path d="M15 3L26 11L22 26L8 26L4 11Z" opacity=".45" />
+        </g>
+      </svg>
+      <div><strong>City Water Network</strong><small>Graph theory lab · Group 7 · 25BSMA10</small></div>
+    </div>
+    <nav id="tabs" aria-label="Sections">
+      <button data-tab="lab" class="on">Network lab</button><button data-tab="impact">Pipeline impact</button>
+      <button data-tab="scen">Saved scenarios</button><button data-tab="quiz">Quiz</button><button
+        data-tab="report">Project</button>
+    </nav>
+    <button id="theme" class="ghost" aria-label="Toggle dark mode">Theme</button>
+  </header>
 
-<main>
-<section id="lab" class="tab on">
-  <div class="intro"><h1>Break a pipeline. Watch the maths respond.</h1>
-    <p>Tap two locations to add or remove the pipeline between them, or tap a pipe to cut it. Every property below is recomputed live.</p></div>
-  <div class="grid2">
-    <div class="panel">
-      <svg id="svg" viewBox="0 0 600 440" role="img" aria-label="Water network graph"></svg>
-      <div class="row" id="presets">
-        <button data-p="orig">Original</button><button data-p="mod">Remove WE</button>
-        <button data-p="k33">Non-planar demo</button><button data-p="rand">Random</button><button data-p="none">Clear</button>
+  <main>
+    <section id="lab" class="tab on">
+      <div class="intro">
+        <h1>Break a pipeline. Watch the maths respond.</h1>
+        <p>Tap two locations to add or remove the pipeline between them, or tap a pipe to cut it. Every property below
+          is recomputed live.</p>
       </div>
-      <div class="row"><input id="sname" placeholder="Scenario name" maxlength="60"><button id="save" class="pri">Save to database</button>
-        <button id="export" class="ghost">Copy JSON</button></div>
-      <p class="hint" id="sel"></p>
-    </div>
-    <div>
-      <div class="cards" id="cards"></div>
-      <div class="panel"><h3>Degrees &amp; Handshaking</h3><div id="degs"></div><p id="hand" class="mono"></p></div>
-    </div>
-  </div>
-  <div class="grid2">
-    <div class="panel"><h3>Planarity &amp; Euler</h3><p id="euler" class="mono"></p><p id="planNote" class="hint"></p></div>
-    <div class="panel"><h3>Chromatic polynomial</h3><p id="poly" class="mono"></p>
-      <label class="slide">Maintenance teams k = <b id="kv">4</b><input id="k" type="range" min="1" max="7" value="4"></label>
-      <p id="kres" class="big"></p><div id="chart" class="chart"></div></div>
-  </div>
-</section>
+      <div class="grid2">
+        <div class="panel">
+          <svg id="svg" viewBox="0 0 600 440" role="img" aria-label="Water network graph"></svg>
+          <div class="row" id="presets">
+            <button data-p="orig">Original</button><button data-p="mod">Remove WE</button>
+            <button data-p="k33">Non-planar demo</button><button data-p="rand">Random</button><button
+              data-p="none">Clear</button>
+          </div>
+          <div class="row"><input id="sname" placeholder="Scenario name" maxlength="60"><button id="save"
+              class="pri">Save to database</button>
+            <button id="export" class="ghost">Copy JSON</button>
+          </div>
+          <p class="hint" id="sel"></p>
+        </div>
+        <div>
+          <div class="cards" id="cards"></div>
+          <div class="panel">
+            <h3>Degrees &amp; Handshaking</h3>
+            <div id="degs"></div>
+            <p id="hand" class="mono"></p>
+          </div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Planarity &amp; Euler</h3>
+          <p id="euler" class="mono"></p>
+          <p id="planNote" class="hint"></p>
+        </div>
+        <div class="panel">
+          <h3>Chromatic polynomial</h3>
+          <p id="poly" class="mono"></p>
+          <label class="slide">Maintenance teams k = <b id="kv">4</b><input id="k" type="range" min="1" max="7"
+              value="4"></label>
+          <p id="kres" class="big"></p>
+          <div id="chart" class="chart"></div>
+        </div>
+      </div>
+    </section>
 
-<section id="impact" class="tab"><div class="intro"><h1>What does each pipeline cost the colouring?</h1>
-  <p>Every single-pipeline removal from the current network, tested for connectivity, planarity and chromatic number. Tap a row to apply the cut in the lab.</p></div>
-  <div class="panel scroll"><table id="itab"></table></div></section>
+    <section id="impact" class="tab">
+      <div class="intro">
+        <h1>What does each pipeline cost the colouring?</h1>
+        <p>Every single-pipeline removal from the current network, tested for connectivity, planarity and chromatic
+          number. Tap a row to apply the cut in the lab.</p>
+      </div>
+      <div class="panel scroll">
+        <table id="itab"></table>
+      </div>
+    </section>
 
-<section id="scen" class="tab"><div class="intro"><h1>Scenarios stored in SQLite</h1>
-  <p>Save any layout from the lab, reload it later, or remove it. Data persists in <code>water.db</code>.</p></div>
-  <div id="slist" class="cards"></div></section>
+    <section id="scen" class="tab">
+      <div class="intro">
+        <h1>Scenarios stored in SQLite</h1>
+        <p>Save any layout from the lab, reload it later, or remove it. Data persists in <code>water.db</code>.</p>
+      </div>
+      <div id="slist" class="cards"></div>
+    </section>
 
-<section id="quiz" class="tab"><div class="intro"><h1>Check what you learned</h1><p>Six questions drawn from the report. Scores go to the leaderboard.</p></div>
-  <div class="grid2"><div class="panel"><div id="qs"></div><div class="row"><input id="qname" placeholder="Your name" maxlength="30"><button id="qsub" class="pri">Submit answers</button></div><p id="qres" class="big"></p></div>
-  <div class="panel"><h3>Leaderboard</h3><ol id="board"></ol></div></div></section>
+    <section id="quiz" class="tab">
+      <div class="intro">
+        <h1>Check what you learned</h1>
+        <p>Six questions drawn from the report. Scores go to the leaderboard.</p>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div id="qs"></div>
+          <div class="row"><input id="qname" placeholder="Your name" maxlength="30"><button id="qsub" class="pri">Submit
+              answers</button></div>
+          <p id="qres" class="big"></p>
+        </div>
+        <div class="panel">
+          <h3>Leaderboard</h3>
+          <ol id="board"></ol>
+        </div>
+      </div>
+    </section>
 
-<section id="report" class="tab"><div class="intro"><h1>About the project</h1><p>An application of graph theory in urban pipeline planning, submitted 25 November 2026 to Dr. K J Ghanashyam, Jain (Deemed-to-be) University.</p></div>
-  <div class="grid2">
-    <div class="panel"><h3>Team</h3><table><tr><td>Aman Chand</td><td>Graph modelling &amp; design</td></tr><tr><td>Anshu Prashad Sharaff</td><td>Information gathering</td></tr>
-      <tr><td>Shubham Sah</td><td>Prototype development</td></tr><tr><td>Md Aamir Siddique</td><td>Testing &amp; documentation</td></tr>
-      <tr><td>Mehvish Jibreel</td><td>Research</td></tr><tr><td>Mirsa Irshad</td><td>Mathematical analysis</td></tr></table></div>
-    <div class="panel"><h3>Locations</h3><table><tr><td>W</td><td>Water treatment plant</td></tr><tr><td>A</td><td>Residential zone</td></tr><tr><td>B</td><td>Hospital</td></tr>
-      <tr><td>C</td><td>School</td></tr><tr><td>D</td><td>Industrial zone</td></tr><tr><td>E</td><td>Shopping complex</td></tr></table></div>
-  </div>
-  <div class="panel"><h3>Findings from the report</h3><ul>
-    <li>Original network is a wheel (5-cycle plus hub): 6 vertices, 10 edges, planar with 6 faces, chromatic number 4, P(G,4) = 120.</li>
-    <li>Removing WE keeps it connected and planar and lowers the chromatic number to 3, with 6 valid 3-colourings.</li>
-    <li>Limits: no distances, flow, pressure, pipe size or cost data. This is a planning model, not a hydraulic design.</li></ul></div>
-</section>
-</main>
-<div id="toast" role="status"></div>
-<script src="graph.js"></script>
-<script src="app.js"></script>
+    <section id="report" class="tab">
+      <div class="intro">
+        <h1>About the project</h1>
+        <p>An application of graph theory in urban pipeline planning, submitted 25 November 2026 to Dr. K J Ghanashyam,
+          Jain (Deemed-to-be) University.</p>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Team</h3>
+          <table>
+            <tr>
+              <td>Aman Chand</td>
+              <td>Graph modelling &amp; design</td>
+            </tr>
+            <tr>
+              <td>Anshu Prashad Sharaff</td>
+              <td>Information gathering</td>
+            </tr>
+            <tr>
+              <td>Shubham Sah</td>
+              <td>Prototype development</td>
+            </tr>
+            <tr>
+              <td>Md Aamir Siddique</td>
+              <td>Testing &amp; documentation</td>
+            </tr>
+            <tr>
+              <td>Mehvish Jibreel</td>
+              <td>Research</td>
+            </tr>
+            <tr>
+              <td>Mirsa Irshad</td>
+              <td>Mathematical analysis</td>
+            </tr>
+          </table>
+        </div>
+        <div class="panel">
+          <h3>Locations</h3>
+          <table>
+            <tr>
+              <td>W</td>
+              <td>Water treatment plant</td>
+            </tr>
+            <tr>
+              <td>A</td>
+              <td>Residential zone</td>
+            </tr>
+            <tr>
+              <td>B</td>
+              <td>Hospital</td>
+            </tr>
+            <tr>
+              <td>C</td>
+              <td>School</td>
+            </tr>
+            <tr>
+              <td>D</td>
+              <td>Industrial zone</td>
+            </tr>
+            <tr>
+              <td>E</td>
+              <td>Shopping complex</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Findings from the report</h3>
+        <ul>
+          <li>Original network is a wheel (5-cycle plus hub): 6 vertices, 10 edges, planar with 6 faces, chromatic
+            number 4, P(G,4) = 120.</li>
+          <li>Removing WE keeps it connected and planar and lowers the chromatic number to 3, with 6 valid 3-colourings.
+          </li>
+          <li>Limits: no distances, flow, pressure, pipe size or cost data. This is a planning model, not a hydraulic
+            design.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <div id="toast" role="status"></div>
+  <script src="graph.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>
